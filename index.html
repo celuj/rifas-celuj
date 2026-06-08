@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Rifas Celuj</title>
+
+  <!-- 📱 RESPONSIVE -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- 🎨 ESTILOS -->
+  <link rel="stylesheet" href="css/styles.css">
+
+  <!-- 🔥 FIREBASE (ORDEN CORRECTO) -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+</head>
+
+<body>
+
+<h1>🔥 DINÁMICAS GANADORAS CELUJ 🔥</h1>
+
+<!-- 📢 INFO DEL SORTEO -->
+<div id="info-sorteo"></div>
+
+<!-- 📊 BARRA PRO -->
+<div class="contenedor-barra">
+  <div class="barra-fondo">
+    <div id="barra"></div>
+  </div>
+  <p id="texto-barra">0% vendido</p>
+</div>
+
+<!-- 💰 BOTONES DE PAGO -->
+<div style="margin:20px;">
+  <button onclick="copiarNequi()">📋 Copiar Nequi</button>
+  <button onclick="enviarComprobante()">📲 Enviar comprobante</button>
+
+  <p style="color:orange; font-weight:bold;">
+    ⚠️ Después de pagar envía el comprobante por WhatsApp
+  </p>
+</div>
+
+<!-- 🔐 BOTÓN ADMIN -->
+<button id="btnAdmin" onclick="activarAdmin()">🔐</button>
+
+<!-- 🔥 PANEL ADMIN -->
+<div id="panelAdmin" style="display:none;">
+
+  <h3>✏️ Editar descripción</h3>
+  <textarea id="editorTexto"></textarea><br><br>
+  <button onclick="guardarTexto()">💾 Guardar texto</button>
+
+  <hr>
+
+  <h3>⚙️ Configuración</h3>
+
+  Nequi:<br>
+  <input id="editorNequi"><br><br>
+
+  WhatsApp:<br>
+  <input id="editorWhats"><br><br>
+
+  <button onclick="guardarConfig()">💾 Guardar Config</button>
+
+  <hr>
+
+  <!-- 🎟️ TIPO DE TALONARIO -->
+  <h3>🎟️ Tipo de talonario</h3>
+
+  <select id="tipoTalonario">
+    <option value="normal">00 - 99 (Normal)</option>
+    <option value="combo">Combo x2</option>
+    <option value="mini">0 - 9</option>
+  </select>
+
+  <br><br>
+
+  <button onclick="cambiarTalonario()">Aplicar Talonario</button>
+
+  <hr>
+
+  <h3>👥 Compradores</h3>
+  <div id="listaCompradores"></div>
+
+  <hr>
+
+  <button onclick="buscarGanador()">🏆 Buscar ganador</button>
+
+  <hr>
+
+  <button onclick="reiniciarRifa()" style="background:red; color:white;">
+    🔥 Reiniciar rifa
+  </button>
+
+</div>
+
+<h3>Selecciona tu número</h3>
+
+<div id="grid"></div>
+
+<br>
+
+<button onclick="mostrarFormulario()">RESERVAR</button>
+
+<!-- 📋 FORMULARIO -->
+<div id="formulario" style="display:none;">
+  <h3>Reservar números</h3>
+
+  <input type="text" id="nombre" placeholder="Tu nombre"><br><br>
+  <input type="text" id="telefono" placeholder="Tu teléfono"><br><br>
+
+  <button onclick="confirmarReserva()">Confirmar</button>
+</div>
+
+<!-- 🔥 FIREBASE CONFIG -->
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyAixwAxV-QNxgzn-qCKMb3C4gdHEajV08E",
+  authDomain: "rifas-celuj.firebaseapp.com",
+  projectId: "rifas-celuj",
+  storageBucket: "rifas-celuj.appspot.com",
+  messagingSenderId: "810770275870",
+  appId: "1:810770275870:web:8a19000163796f8d45980f"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+</script>
+
+<!-- ⚡ TU SCRIPT -->
+<script src="js/app.js"></script>
+
+</body>
+</html>
