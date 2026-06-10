@@ -52,8 +52,8 @@ h1 {
 /* 🔢 GRID */
 #grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(85px, 1fr));
-  gap: 12px;
+  grid-template-columns: repeat(10, 1fr);
+  gap: 6px;
   max-width: 650px;
   margin: 20px auto;
 }
@@ -61,9 +61,9 @@ h1 {
 /* 🔘 NUMEROS */
 .numero {
   background: linear-gradient(145deg, #020617, #020617);
-  padding: 22px;
-  font-size: 18px;
-  border-radius: 14px;
+  padding: 14px;
+  font-size: 14px;
+  border-radius: 10px;
   cursor: pointer;
   transition: 0.25s;
   position: relative;
@@ -113,7 +113,7 @@ h1 {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  font-size: 30px;
+  font-size: 22px;
   color: #fffb00;
   text-shadow:
     0 0 5px #fffb00,
@@ -189,19 +189,59 @@ button:hover {
   border: 1px solid #00f0ff33;
 }
 
-/* 📱 RESPONSIVE */
+/* 📱 ULTRA COMPACTO (🔥 CLAVE PARA CELULARES) */
 @media (max-width: 480px) {
 
+  #grid {
+    gap: 2px;
+  }
+
   .numero {
-    padding: 24px;
-    font-size: 20px;
+    padding: 6px;
+    font-size: 10px;
+    border-radius: 6px;
   }
 
   h1 {
-    font-size: 20px;
+    font-size: 16px;
   }
 
   button {
-    font-size: 18px;
+    font-size: 14px;
   }
+}
+
+/* 🔥 ADAPTATIVO PRO */
+.numero {
+  font-size: clamp(9px, 2.2vw, 16px);
+  padding: clamp(6px, 1.2vw, 14px);
+}
+
+/* 🔒 BLOQUEADO (CLICK INMEDIATO) */
+.bloqueado {
+  background-color: #999 !important;
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+/* 🎉 TOAST (CONFIRMACIÓN PRO) */
+#toast {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  background: #022c22;
+  color: #22c55e;
+  padding: 14px 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 15px #22c55e;
+  opacity: 0;
+  transition: 0.4s;
+  z-index: 999;
+  font-weight: bold;
+}
+
+#toast.show {
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
 }
