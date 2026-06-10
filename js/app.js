@@ -97,19 +97,42 @@ function crearCasilla(texto) {
   grid.appendChild(div);
 }
 
-// 🎯 SELECCIONAR
+// 🎯 SELECCIONAR (🔥 MEJORADO CON BLOQUEO VISUAL)
 function seleccionar(elemento, num) {
+
+  // ❌ si ya está ocupado
   if (elemento.classList.contains("ocupado")) {
     alert("❌ Número ocupado");
     return;
   }
 
+  // ❌ si ya está bloqueado temporalmente
+  if (elemento.classList.contains("bloqueado")) {
+    return;
+  }
+
+  // 🔥 BLOQUEO INMEDIATO (GRIS)
+  elemento.classList.add("bloqueado");
+
+  // 👉 evitar doble click rápido
+  elemento.style.pointerEvents = "none";
+
+  // 🔥 lógica original (NO TOCADA)
   if (elemento.classList.contains("seleccionado")) {
     elemento.classList.remove("seleccionado");
     seleccionados.delete(num);
+    elemento.classList.remove("bloqueado"); // desbloquea si deselecciona
+    elemento.style.pointerEvents = "auto";
   } else {
     elemento.classList.add("seleccionado");
     seleccionados.add(num);
+
+    // 🔥 abrir formulario automático
+    document.getElementById("formulario").style.display = "block";
+
+    setTimeout(() => {
+      document.getElementById("nombre").focus();
+    }, 100);
   }
 }
 
@@ -159,19 +182,22 @@ async function confirmarReserva() {
     });
   }
 
-  let mensaje = `Hola, reservé: ${[...seleccionados].join(", ")}. Pagado por Nequi al ${CONFIG.nequi}. Nombre: ${nombre}`;
-  let url = `https://wa.me/57${CONFIG.whatsapp}?text=${encodeURIComponent(mensaje)}`;
-
-  window.open(url, "_blank");
-
+ let numeros = [...seleccionados].join(", ");
+enviarWhatsApp(nombre, numeros, telefono);
   alert("✅ Reserva hecha");
 
   seleccionados.clear();
   document.getElementById("formulario").style.display = "none";
 
-  // 🧹 LIMPIAR
+  // 🧹 limpiar
   document.getElementById("nombre").value = "";
   document.getElementById("telefono").value = "";
+
+  // 🔥 quitar bloqueos visuales después de reservar
+  document.querySelectorAll(".bloqueado").forEach(el => {
+    el.classList.remove("bloqueado");
+    el.style.pointerEvents = "auto";
+  });
 
   bloqueando = false;
 }
@@ -207,7 +233,6 @@ function activarTiempoReal() {
 
         let texto = div.innerText;
 
-        // 🔥 FIX COMBO
         if (
           texto === num ||
           texto.startsWith(num + " -") ||
@@ -234,7 +259,7 @@ function activarTiempoReal() {
 }
 
 // =========================
-// 🔐 ADMIN
+// 🔐 ADMIN (TODO IGUAL)
 // =========================
 
 function activarAdmin() {
@@ -249,7 +274,6 @@ function activarAdmin() {
   }
 }
 
-// 🆕 CAMBIAR TALONARIO
 async function cambiarTalonario() {
   let tipo = document.getElementById("tipoTalonario").value;
 
@@ -265,7 +289,6 @@ async function cambiarTalonario() {
   alert("✅ Talonario cambiado");
 }
 
-// 📥 PANEL
 async function cargarPanelAdmin() {
   let configDoc = await db.collection("config").doc("datos").get();
 
@@ -299,7 +322,6 @@ async function cargarPanelAdmin() {
   });
 }
 
-// ✅ MARCAR PAGADO
 async function marcarPagado(num) {
   let ok = confirm("¿Confirmar pago del número " + num + "?");
   if (!ok) return;
@@ -311,7 +333,6 @@ async function marcarPagado(num) {
   alert("✅ Marcado como pagado");
 }
 
-// ❌ LIBERAR
 async function liberarNumero(num) {
   let ok = confirm("¿Liberar número " + num + "?");
   if (!ok) return;
@@ -321,7 +342,6 @@ async function liberarNumero(num) {
   alert("Número liberado");
 }
 
-// 💾 CONFIG
 async function guardarConfig() {
   let nequi = document.getElementById("editorNequi").value;
   let whatsapp = document.getElementById("editorWhats").value;
@@ -331,7 +351,6 @@ async function guardarConfig() {
   alert("✅ Config guardada");
 }
 
-// 🏆 GANADOR
 async function buscarGanador() {
   let numero = prompt("Número ganador:");
   let doc = await db.collection("rifa").doc(numero).get();
@@ -344,7 +363,6 @@ async function buscarGanador() {
   }
 }
 
-// 🔥 REINICIAR
 async function reiniciarRifa() {
   let confirmar = confirm("⚠️ Esto borrará TODA la rifa. ¿Seguro?");
   if (!confirmar) return;
@@ -363,7 +381,6 @@ async function reiniciarRifa() {
   alert("🔥 Rifa reiniciada");
 }
 
-// ✏️ TEXTO
 async function guardarTexto() {
   let texto = document.getElementById("editorTexto").value;
 
@@ -382,7 +399,6 @@ async function cargarTexto() {
   }
 }
 
-// 💰 BOTONES
 function copiarNequi() {
   navigator.clipboard.writeText(CONFIG.nequi);
   alert("Nequi copiado: " + CONFIG.nequi);
@@ -412,3 +428,33 @@ async function iniciar() {
 }
 
 iniciar();
+// 🔥 TOAST PRO
+function mostrarToast(mensaje) {
+  const toast = document.getElementById("toast");
+  toast.textContent = mensaje;
+  toast.classList.add("show");
+
+  setTimeout(() => {
+    toast.classList.remove("show");
+  }, 3000);
+}
+
+// 🔥 WHATSAPP PRO
+function enviarWhatsApp(nombre, numeros, telefonoUsuario) {
+
+  let telefono = CONFIG.whatsapp;
+
+  let mensaje = `Hola, soy ${nombre}.
+Reservé los números: ${numeros}.
+Mi teléfono es: ${telefonoUsuario}.
+Quedo atento para el pago.`;
+
+  let url = `https://api.whatsapp.com/send?phone=57${telefono}&text=${encodeURIComponent(mensaje)}`;
+
+  // 🔥 confirmación visual PRO
+  mostrarToast("✅ Reserva hecha, abriendo WhatsApp...");
+
+  setTimeout(() => {
+    window.open(url, "_blank");
+  }, 1200);
+}
